@@ -4,7 +4,6 @@ import requests
 import re
 import string
 import sys
-import random
 
 banner = '''
 USAGE: python %s <New admin's password>
