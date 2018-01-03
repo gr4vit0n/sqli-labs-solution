@@ -7,7 +7,7 @@ import sys
 
 banner = '''
 USAGE: python %s <New admin's password>
-EXAMPLE: python %s "SELECT table_schema FROM information_schema.tables limit 0,1"
+EXAMPLE: python %s P@ssw0rd
 ''' % (sys.argv[0], sys.argv[0])
 
 if(len(sys.argv) != 2):
